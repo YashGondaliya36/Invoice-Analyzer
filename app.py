@@ -11,7 +11,7 @@ st.title("Invoice Analyzer")
 st.write("Upload multiple JPG files to analyze invoices.")
 
 # File uploader for multiple files
-uploaded_files = st.file_uploader("Choose JPG files", type=["jpg", "jpeg"], accept_multiple_files=True)
+uploaded_files = st.file_uploader("Choose JPG files", type=["jpg"], accept_multiple_files=True)
 
 # Store all images first
 saved_file_paths = []
