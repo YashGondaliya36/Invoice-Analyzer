@@ -120,38 +120,47 @@ def plot_daily_sales(df, date_col, amount_col, save_dir, saved_plots):
         logger.error(f"Error in lineplot for daily sales: {e}")
 
 
-def make_visualizations(df, save_dir='local_database/plots'):
+def make_visualizations(selected_columns, save_dir='local_database/plots'):
     """
-    Orchestrator to create and save visualizations for invoice data.
+    Orchestrator to create and save visualizations for invoice data based on selected columns.
     """
     logger.info("Starting visualization generation")
 
     # Ensure the save directory exists
     save_dir = ensure_folder_exists(save_dir)
+    
+    # Read the DataFrame from local storage
+    try:
+        df = pd.read_csv('local_database/invoice_data.csv')
+    except Exception as e:
+        logger.error(f"Error reading CSV file: {e}")
+        return {}
+
+    
 
     saved_plots = {}
     sns.set_style("whitegrid")
     plt.rcParams['figure.figsize'] = (12, 6)
 
-    # Find relevant columns
-    date_col = find_column(df, ['date', 'invoice date', 'bill date'])
-    product_col = find_column(df, ['product', 'item', 'description', 'product name'])
-    amount_col = find_column(df, ['amount', 'total', 'value'])
-    quantity_col = find_column(df, ['qty', 'quantity', 'units'])
-    invoice_col = find_column(df, ['invoice no', 'reference', 'bill no'])
+    # Filter columns based on selection
+    df_selected = df[selected_columns]
 
-    # Generate individual plots
-    if amount_col:
-        plot_amount_boxplot(df, amount_col, save_dir, saved_plots)
-    if quantity_col:
-        plot_quantity_boxplot(df, quantity_col, save_dir, saved_plots)
-    if product_col and amount_col:
-        plot_product_sales(df, product_col, amount_col, save_dir, saved_plots)
-    if product_col and quantity_col:
-        plot_quantity_analysis(df, product_col, quantity_col, save_dir, saved_plots)
-    if date_col and amount_col:
-        plot_daily_sales(df, date_col, amount_col, save_dir, saved_plots)
+    # Identify column types based on selected columns
+    date_col = find_column(df_selected, ['date', 'invoice date', 'bill date'])
+    product_col = find_column(df_selected, ['product', 'item', 'description', 'product name'])
+    amount_col = find_column(df_selected, ['amount', 'total', 'value'])
+    quantity_col = find_column(df_selected, ['qty', 'quantity', 'units'])
+
+    # Generate only plots for selected columns
+    if amount_col and amount_col in selected_columns:
+        plot_amount_boxplot(df_selected, amount_col, save_dir, saved_plots)
+    if quantity_col and quantity_col in selected_columns:
+        plot_quantity_boxplot(df_selected, quantity_col, save_dir, saved_plots)
+    if product_col and amount_col and all(col in selected_columns for col in [product_col, amount_col]):
+        plot_product_sales(df_selected, product_col, amount_col, save_dir, saved_plots)
+    if product_col and quantity_col and all(col in selected_columns for col in [product_col, quantity_col]):
+        plot_quantity_analysis(df_selected, product_col, quantity_col, save_dir, saved_plots)
+    if date_col and amount_col and all(col in selected_columns for col in [date_col, amount_col]):
+        plot_daily_sales(df_selected, date_col, amount_col, save_dir, saved_plots)
 
     return saved_plots
-
-
