@@ -5,6 +5,7 @@ from PIL import Image
 import google.generativeai as genai
 from dotenv import load_dotenv
 from IA_Logger import logger
+from config.path_manager import path_manager
 
 load_dotenv()
 
@@ -26,7 +27,7 @@ def configure_gemini_api():
 
     try:
         genai.configure(api_key=api_key)
-        model = genai.GenerativeModel(model_name="gemini-1.5-flash")
+        model = genai.GenerativeModel(model_name="gemini-2.0-flash-exp")
         logger.info("Gemini API configured successfully.")
         return model
     except Exception as e:
@@ -113,7 +114,7 @@ def parse_response_to_json(response_text):
 
 def save_data_to_csv(data, folder_path):
     """Save the structured data to a CSV file in the specified folder."""
-    csv_file_path = os.path.join(folder_path, "invoice_data.csv")
+    csv_file_path = path_manager.invoice_data
     try:
         df = pd.DataFrame(data)
         df.to_csv(csv_file_path, index=False)

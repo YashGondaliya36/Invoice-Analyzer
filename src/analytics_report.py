@@ -3,6 +3,7 @@ from PIL import Image
 import google.generativeai as genai
 from dotenv import load_dotenv
 from IA_Logger import logger
+from config.path_manager import path_manager
 
 # Load environment variables from .env file
 load_dotenv()
@@ -48,7 +49,7 @@ def generate_report(model, images):
 
 # Function to save the report to a text file
 def save_report_to_file(report_text):
-    report_filename = os.path.join('local_database', 'generated_report.txt')
+    report_filename = path_manager.analytic_report
     try:
         with open(report_filename, 'w', encoding='utf-8') as report_file:
             report_file.write(report_text)
@@ -70,7 +71,7 @@ def process_and_generate_brief_report():
         return "API key not found. Please set the GOOGLE_API_KEY in your environment."
     
     genai.configure(api_key=api_key)
-    model = genai.GenerativeModel(model_name="gemini-1.5-flash")
+    model = genai.GenerativeModel(model_name="gemini-2.0-flash-exp")
     
     images = load_images_from_local_database()
     if not images:

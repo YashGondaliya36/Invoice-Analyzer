@@ -6,6 +6,8 @@ from src.analytics_report import process_and_generate_brief_report
 from src.dataframe_builder import process_invoices_and_store_data
 from src.graph_builder import make_visualizations
 from IA_Logger import logger
+from config.path_manager import path_manager
+import shutil
 
 # Set up a 'local database' folder
 if not os.path.exists('local_database'):
@@ -49,7 +51,7 @@ if st.button("Process Images"):
             st.error(f"Error during processing: {e}")
             logger.error(f"Error during processing: {e}")
 
-dataframe_file  = os.path.join("local_database","invoice_data.csv")
+dataframe_file = path_manager.invoice_data
 
 if os.path.exists(dataframe_file):
     # Move the dataframe loading outside the button
@@ -92,7 +94,7 @@ def load_image(image_path):
         return None
 
 # Add this where you want to display the plots
-plots_dir = os.path.join("local_database", "plots")
+plots_dir = path_manager.plotted_graphs
 
 if os.path.exists(plots_dir):
     st.write("## Analytics Dashboard")
@@ -128,7 +130,7 @@ if st.button("Generate Report"):
         st.error(f"Error generating the report: {e}")
         logger.error(f"Error generating the report: {e}")
 
-report_file = os.path.join('local_database', 'generated_report.txt')
+report_file = path_manager.analytic_report
 
 if os.path.exists(report_file):
     if st.button("Show Report"):
@@ -136,7 +138,33 @@ if os.path.exists(report_file):
             with open(report_file, 'r') as file:
                 report = file.read()
             st.write("Generated Report:")
-            st.markdown(report)  # Display the report in text format
+            st.markdown(report)
+            
+            # Cleanup logic after displaying report
+            try:
+                local_db_path = path_manager.local_database
+                
+                # Check if directory exists
+                if os.path.exists(local_db_path):
+                    # Remove all contents of the directory
+                    for item in os.listdir(local_db_path):
+                        item_path = os.path.join(local_db_path, item)
+                        try:
+                            if os.path.isfile(item_path):
+                                os.unlink(item_path)
+                            elif os.path.isdir(item_path):
+                                shutil.rmtree(item_path)
+                            logger.info(f"Removed: {item_path}")
+                        except Exception as e:
+                            logger.error(f"Error removing {item_path}: {e}")
+                    
+                    st.success("Analysis complete! All files have been successfully analyzed and removed from the local database. Thank you for your patience!")
+                    logger.info("Local database cleaned after report display")
+                
+            except Exception as e:
+                st.error(f"Error during cleanup: {e}")
+                logger.error(f"Error during cleanup: {e}")
+                
         except Exception as e:
             st.error(f"Error reading the report file: {e}")
             logger.error(f"Error reading the report file: {e}")

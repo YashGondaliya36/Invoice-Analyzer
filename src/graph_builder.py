@@ -3,6 +3,7 @@ import matplotlib.pyplot as plt
 import os
 import pandas as pd
 from IA_Logger import logger
+from config.path_manager import path_manager
 
 
 def ensure_folder_exists(folder_path):
@@ -120,18 +121,19 @@ def plot_daily_sales(df, date_col, amount_col, save_dir, saved_plots):
         logger.error(f"Error in lineplot for daily sales: {e}")
 
 
-def make_visualizations(selected_columns, save_dir='local_database/plots'):
+def make_visualizations(selected_columns, save_dir=None):
     """
     Orchestrator to create and save visualizations for invoice data based on selected columns.
     """
     logger.info("Starting visualization generation")
 
-    # Ensure the save directory exists
-    save_dir = ensure_folder_exists(save_dir)
+    # Use path_manager to get paths and ensure directory exists
+    save_dir = save_dir or path_manager.plotted_graphs
+    ensure_folder_exists(save_dir)
     
     # Read the DataFrame from local storage
     try:
-        df = pd.read_csv('local_database/invoice_data.csv')
+        df = pd.read_csv(path_manager.invoice_data)
     except Exception as e:
         logger.error(f"Error reading CSV file: {e}")
         return {}
