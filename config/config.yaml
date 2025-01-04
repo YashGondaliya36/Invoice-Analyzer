@@ -4,9 +4,4 @@ paths:
   analytic_report: local_database/generated_report.txt
   plotted_graphs: local_database/plots/
   
-  plots:
-    amount_boxplot: local_database/plots/1.amount_boxplot.png
-    quantity_boxplot: local_database/plots/2.quantity_boxplot.png
-    product_sales: local_database/plots/3.product_sales.png
-    quantity_analysis: local_database/plots/4.quantity_analysis.png
-    daily_sales: local_database/plots/5.daily_sales.png
+    

@@ -58,6 +58,7 @@ with st.success(""):
     2. Upload your invoice images (JPG format)
     3. Process the images and view report
     4. Check **Visual Trends** for graphs
+    5. After seen Generated graph Click **Complete Anylysis**
     """)
 
 
