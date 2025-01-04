@@ -2,8 +2,5 @@ streamlit
 pillow
 google-generativeai
 python-dotenv
-matplotlib
-seaborn
 pyYAML
 plotly
-kaleido
