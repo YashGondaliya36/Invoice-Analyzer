@@ -2,6 +2,5 @@ paths:
   local_database: local_database
   invoice_data: local_database/invoice_data.csv
   analytic_report: local_database/generated_report.txt
-  plotted_graphs: local_database/plots/
   
     

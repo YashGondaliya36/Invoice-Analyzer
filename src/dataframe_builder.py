@@ -74,6 +74,9 @@ def process_invoices_with_gemini(model, images):
     - Ensure numbers make mathematical sense
     - Confirm date is logically valid
     - Verify invoice number format is consistent
+    - ex. Qty : 20.00 -> 20 (keep only integer value)
+          amount : 3000.3500 -> 3000.35(keep two digit after .)
+
 
     Example of structured response:
     [
