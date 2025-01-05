@@ -58,7 +58,7 @@ if st.button("Generate Report"):
             report = process_and_generate_brief_report()
             
             # Show Report
-            with open(path_manager.analytic_report, 'r') as file:
+            with open(path_manager.analytic_report, 'r',encoding='utf-8') as file:
                 report_text = file.read()
             st.subheader("Generated Report:")
             st.markdown(report_text)
