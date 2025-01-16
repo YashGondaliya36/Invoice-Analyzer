@@ -103,6 +103,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 ## 📬 Contact
 
-Your Name - [@Yash Gondaliya](https://www.linkedin.com/in/yash-gondaliya-02427a260)
+[@Yash Gondaliya](https://www.linkedin.com/in/yash-gondaliya-02427a260)
 
 Project Link: [https://github.com/YashGondaliya36/Invoice-Analyzer](https://github.com/YashGondaliya36/Invoice-Analyzer)
