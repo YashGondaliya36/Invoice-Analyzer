@@ -22,7 +22,7 @@ class Settings(BaseSettings):
     
     # Google Gemini API
     google_api_key: str = Field(..., description="Google Gemini API Key")
-    gemini_model: str = Field(default="gemini-2.0-flash-exp", description="Gemini model name")
+    gemini_model: str = Field(default="gemini-2.5-flash", description="Gemini model name")
     
     # Server Configuration
     host: str = Field(default="0.0.0.0", description="Server host")

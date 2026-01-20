@@ -5,6 +5,9 @@ Aggregates all endpoint routers.
 
 from fastapi import APIRouter
 
+from app.api.v1.endpoints import invoices, reports, visualizations, sessions
+
+
 # Create main API router
 api_router = APIRouter()
 
@@ -21,8 +24,27 @@ async def health_check():
     }
 
 
-# TODO: Include endpoint routers in Phase 4
-# from app.api.v1.endpoints import invoices, reports, visualizations
-# api_router.include_router(invoices.router, prefix="/invoices", tags=["Invoices"])
-# api_router.include_router(reports.router, prefix="/reports", tags=["Reports"])
-# api_router.include_router(visualizations.router, prefix="/visualizations", tags=["Visualizations"])
+# Include endpoint routers
+api_router.include_router(
+    invoices.router,
+    prefix="/invoices",
+    tags=["Invoices"]
+)
+
+api_router.include_router(
+    reports.router,
+    prefix="/reports",
+    tags=["Reports"]
+)
+
+api_router.include_router(
+    visualizations.router,
+    prefix="/visualizations",
+    tags=["Visualizations"]
+)
+
+api_router.include_router(
+    sessions.router,
+    prefix="/sessions",
+    tags=["Sessions"]
+)
