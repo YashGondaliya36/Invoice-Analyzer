@@ -6,7 +6,6 @@ from src.analytics_report import process_and_generate_brief_report
 from IA_Logger import logger
 from config.path_manager import path_manager
 
-
 # Page configuration
 st.set_page_config(
     page_title="Insight Invoices",

@@ -1,6 +1,33 @@
-streamlit
-pillow
-google-generativeai
+# ===========================================
+# Invoice Analyzer - FastAPI Backend
+# ===========================================
+
+# ----------- FastAPI & Server -----------
+fastapi
+uvicorn[standard]
+python-multipart
+
+# ----------- Configuration -----------
+pydantic-settings
 python-dotenv
 pyYAML
+
+# ----------- Data Processing -----------
+pandas
+pillow
+
+# ----------- AI & LLM -----------
+google-genai
+
+# ----------- Visualization -----------
 plotly
+
+# ----------- Async Support -----------
+aiofiles
+
+# ----------- Testing -----------
+pytest
+httpx
+
+# ----------- Streamlit (Legacy UI) -----------
+streamlit

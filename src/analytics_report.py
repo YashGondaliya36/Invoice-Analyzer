@@ -61,7 +61,8 @@ def generate_report(model, images):
                 Additional Instructions:
                 Format the report with clear sections and bullet points for readability.
                 Use quantitative metrics and percentages wherever possible.
-                Ensure insights are actionable and backed by data trends.'''
+                Ensure insights are actionable and backed by data trends.
+                '''
     
     try:
         response = model.generate_content([prompt] + images)
@@ -88,7 +89,7 @@ def process_and_generate_brief_report():
     
     ensure_local_database_folder()
 
-    # Ensure the API key is set in the environment
+    
     api_key = os.getenv("GOOGLE_API_KEY")
     if not api_key:
         logger.error("API key not found. Please set the GOOGLE_API_KEY in your environment.")

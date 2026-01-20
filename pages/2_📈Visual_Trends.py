@@ -7,7 +7,6 @@ from config.path_manager import path_manager
 import shutil
 import atexit
 
-# Page configuration
 st.set_page_config(
     page_title="Visual Trends",
     page_icon="📈",
