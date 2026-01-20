@@ -33,6 +33,7 @@ MANIFEST
 *.spec
 
 local_database/
+storage/
 IA/
 # Installer logs
 pip-log.txt
