@@ -1,12 +1,16 @@
 """
 Gemini AI Service.
-Handles all interactions with Google's Gemini API using the google-genai library.
+
+This module provides an abstraction layer for interactions with Google's Gemini API via the 
+google-genai library. It supports both synchronous and asynchronous content generation,
+including automatic retries with exponential backoff for network resilience.
 """
 
-from typing import Optional
+import asyncio
 from functools import lru_cache
-from PIL import Image
+from typing import Optional, List
 
+from PIL import Image
 from google import genai
 from google.genai import types
 
@@ -16,118 +20,157 @@ from app.utils.logger import logger
 
 class GeminiService:
     """
-    Service class for Google Gemini AI interactions.
-    Uses the new google-genai library.
+    Service class for managing Google Gemini AI interactions.
+    
+    Attributes:
+        client (genai.Client): The authenticated Gemini API client.
+        model (str): The specific Gemini model identifier (e.g., 'gemini-1.5-pro').
     """
     
     def __init__(self):
-        """Initialize the Gemini client."""
+        """
+        Initialize the Gemini service client.
+        
+        Using the API key from application settings.
+        """
         self.client = genai.Client(api_key=settings.google_api_key)
         self.model = settings.gemini_model
-        logger.info(f"Gemini service initialized with model: {self.model}")
+        logger.info(f"GeminiService initialized with model: {self.model}")
     
     async def generate_content(
         self,
         prompt: str,
-        images: Optional[list[Image.Image]] = None,
+        images: Optional[List[Image.Image]] = None,
         temperature: float = 0.7,
         max_output_tokens: int = 8192,
+        max_retries: int = 3,
     ) -> str:
         """
-        Generate content using Gemini AI.
+        Generate content asynchronously using the Gemini model.
+        
+        Includes built-in retry logic with exponential backoff to handle transient API errors.
         
         Args:
-            prompt: Text prompt for the model
-            images: Optional list of PIL Images to include
-            temperature: Model temperature (0-1)
-            max_output_tokens: Maximum tokens in response
+            prompt (str): The text instruction for the model.
+            images (Optional[List[Image.Image]]): Optional list of PIL Image objects to include in the context.
+            temperature (float): Controls randomness (0.0 to 1.0). Lower is more deterministic.
+            max_output_tokens (int): Maximum number of tokens allowed in the response.
+            max_retries (int): Maximum number of retry attempts for failed API calls.
             
         Returns:
-            Generated text response
+            str: The generated text content from the model.
+            
+        Raises:
+            RuntimeError: If the API call fails after all retry attempts.
         """
-        try:
-            # Build contents list
-            contents = []
+        # Construct request payload
+        request_contents = []
+        if images:
+            request_contents.extend(images)
+        request_contents.append(prompt)
             
-            # Add images first if provided
-            if images:
-                for img in images:
-                    contents.append(img)
-            
-            # Add text prompt
-            contents.append(prompt)
-            
-            # Configure generation settings
-            config = types.GenerateContentConfig(
-                temperature=temperature,
-                max_output_tokens=max_output_tokens,
-            )
-            
-            # Generate content using async client
-            response = await self.client.aio.models.generate_content(
-                model=self.model,
-                contents=contents,
-                config=config,
-            )
-            
-            logger.info("Successfully generated content from Gemini")
-            return response.text
-            
-        except Exception as e:
-            logger.error(f"Error generating content with Gemini: {e}")
-            raise RuntimeError(f"Gemini API error: {str(e)}")
+        generation_config = types.GenerateContentConfig(
+            temperature=temperature,
+            max_output_tokens=max_output_tokens
+        )
+        
+        last_exception = None
+        
+        for attempt in range(max_retries):
+            try:
+                response = await self.client.aio.models.generate_content(
+                    model=self.model,
+                    contents=request_contents,
+                    config=generation_config,
+                )
+                logger.info("Content generated successfully via Gemini API.")
+                return response.text
+                
+            except Exception as e:
+                last_exception = e
+                backoff_time = (2 ** attempt)  # Exponential backoff: 1s, 2s, 4s
+                
+                logger.warning(
+                    f"Gemini API attempt {attempt + 1}/{max_retries} failed: {e}. "
+                    f"Retrying in {backoff_time}s..."
+                )
+                
+                if attempt < max_retries - 1:
+                    await asyncio.sleep(backoff_time)
+        
+        logger.error(f"Gemini API request failed after {max_retries} attempts. Last error: {last_exception}")
+        raise RuntimeError(f"Gemini API failed after {max_retries} retries: {last_exception}")
     
     def generate_content_sync(
         self,
         prompt: str,
-        images: Optional[list[Image.Image]] = None,
+        images: Optional[List[Image.Image]] = None,
         temperature: float = 0.7,
         max_output_tokens: int = 8192,
     ) -> str:
         """
-        Synchronous version of generate_content.
-        Use this when async is not available.
+        Generate content synchronously using the Gemini model.
+        
+        This method is a blocking call and should be used only when async execution 
+        is not feasible.
+        
+        Args:
+            prompt (str): The text instruction.
+            images (Optional[List[Image.Image]]): Optional images.
+            temperature (float): Creativity control.
+            max_output_tokens (int): Response length limit.
+            
+        Returns:
+            str: Generated text response.
+            
+        Raises:
+            RuntimeError: If the API call fails.
         """
         try:
-            contents = []
+            request_contents = []
             
             if images:
-                for img in images:
-                    contents.append(img)
+                request_contents.extend(images)
             
-            contents.append(prompt)
+            request_contents.append(prompt)
             
-            config = types.GenerateContentConfig(
+            generation_config = types.GenerateContentConfig(
                 temperature=temperature,
                 max_output_tokens=max_output_tokens,
             )
             
             response = self.client.models.generate_content(
                 model=self.model,
-                contents=contents,
-                config=config,
+                contents=request_contents,
+                config=generation_config,
             )
             
-            logger.info("Successfully generated content from Gemini (sync)")
+            logger.info("Content generated successfully via Gemini API (Sync).")
             return response.text
             
         except Exception as e:
-            logger.error(f"Error generating content with Gemini: {e}")
-            raise RuntimeError(f"Gemini API error: {str(e)}")
+            logger.error(f"Gemini API Sync Error: {e}")
+            raise RuntimeError(f"Gemini API error: {e}")
     
     def close(self):
-        """Close the Gemini client and release resources."""
+        """
+        Close the Gemini client connection and release resources.
+        """
         try:
             self.client.close()
-            logger.info("Gemini client closed")
+            logger.info("Gemini client connection closed.")
         except Exception as e:
-            logger.warning(f"Error closing Gemini client: {e}")
+            logger.warning(f"Error while closing Gemini client: {e}")
 
 
 @lru_cache()
 def get_gemini_service() -> GeminiService:
     """
-    Get a cached instance of the Gemini service.
-    Uses lru_cache to ensure only one instance is created.
+    Retrieve the singleton instance of the Gemini Service.
+    
+    Uses lru_cache to ensure only one instance is initialized during the application lifecycle.
+    
+    Returns:
+        GeminiService: The active service instance.
     """
     return GeminiService()

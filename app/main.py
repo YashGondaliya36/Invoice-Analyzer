@@ -61,6 +61,32 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+# Global Exception Handler
+@app.middleware("http")
+async def global_exception_handler(request, call_next):
+    try:
+        response = await call_next(request)
+        return response
+    except Exception as e:
+        import traceback
+        from fastapi import status
+        from fastapi.responses import JSONResponse
+        
+        # Log the full stack trace
+        error_msg = f"Unhandled Exception: {str(e)}"
+        print(f"❌ {error_msg}")
+        traceback.print_exc()
+        
+        return JSONResponse(
+            status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
+            content={
+                "success": False,
+                "error": "Internal Server Error",
+                "message": str(e),
+                "detail": "An unexpected error occurred. Please check server logs."
+            }
+        )
+
 # Include API routers
 app.include_router(api_router, prefix="/api/v1")
 
