@@ -22,6 +22,11 @@ from app.models.schemas import (
     ChartData,
     VisualizationResponse,
     
+    # Analytics Models
+    AnalyticsQueryRequest,
+    AnalyticsResponse,
+    InsightResponse,
+    
     # Session Models
     SessionResponse,
     

@@ -39,6 +39,8 @@ IA/
 pip-log.txt
 pip-delete-this-directory.txt
 
+project_06_ai_data_analyst/
+
 # Unit test / coverage reports
 htmlcov/
 .tox/

@@ -5,7 +5,7 @@ Aggregates all endpoint routers.
 
 from fastapi import APIRouter
 
-from app.api.v1.endpoints import invoices, reports, visualizations, sessions
+from app.api.v1.endpoints import invoices, reports, visualizations, sessions, analytics
 
 
 # Create main API router
@@ -47,4 +47,10 @@ api_router.include_router(
     sessions.router,
     prefix="/sessions",
     tags=["Sessions"]
+)
+
+api_router.include_router(
+    analytics.router,
+    prefix="/analytics",
+    tags=["Analytics"]
 )

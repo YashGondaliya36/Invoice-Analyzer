@@ -51,6 +51,10 @@ class FileHandler:
     def get_report_file(self) -> Path:
         """Get the path to the generated report file."""
         return self.session_dir / "report.md"
+
+    def get_visualization_file(self) -> Path:
+        """Get the path to the generated visualization file (HTML)."""
+        return self.session_dir / "chart.html"
     
     def get_metadata_file(self) -> Path:
         """Get the path to the session metadata file."""

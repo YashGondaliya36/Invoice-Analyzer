@@ -193,6 +193,35 @@ class VisualizationResponse(BaseModel):
 
 
 # ===========================================
+# Analytics Models
+# ===========================================
+
+class AnalyticsQueryRequest(BaseModel):
+    """Request to ask a question to the AI Data Analyst."""
+    question: str = Field(..., description="Natural language question about the data")
+
+class AnalyticsResponse(BaseModel):
+    """Response from AI Data Analyst."""
+    success: bool = Field(default=True)
+    answer: str = Field(..., description="Natural language explanation")
+    code: Optional[str] = Field(None, description="Generated Python code")
+    data: Optional[str] = Field(None, description="Result data (if any)")
+    visualization: Optional[str] = Field(None, description="URL/Path to generated chart HTML")
+
+class InsightItem(BaseModel):
+    """Single insight item."""
+    text: str
+    category: str  # info, warning, success, neutral
+    priority: str  # high, medium, low
+
+class InsightResponse(BaseModel):
+    """Response containing automated insights."""
+    success: bool = Field(default=True)
+    insights: list[InsightItem]
+    summary: Optional[dict[str, Any]] = None
+
+
+# ===========================================
 # Session Models
 # ===========================================
 
