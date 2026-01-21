@@ -10,41 +10,16 @@ from app.utils.logger import logger
 from app.utils.file_handler import FileHandler
 
 
+from app.prompts.analytics import REPORT_GENERATION_PROMPT
+
+
 class ReportGenerator:
     """
     Service for generating analytics reports from invoice images.
     """
     
     # Prompt for generating analytics report
-    REPORT_PROMPT = '''
-    You are a financial analyst tasked with reviewing a dataset of invoices. 
-    Based on the provided invoice images, create a detailed and structured report covering the following aspects:
-
-    ## Spending Trends:
-    - Summarize the overall spending patterns, including total spending, average spending per invoice, and spending fluctuations over time.
-    - Highlight the top spending periods (e.g., months, quarters, or years).
-    - Identify categories, vendors, or clients contributing the most to spending.
-
-    ## Key Performance Indicators (KPIs):
-    - Analyze the total number of invoices and the average number of items per invoice.
-    - Highlight high-value invoices (e.g., those exceeding a specific threshold).
-    - Report on vendor/client contributions to spending or revenue.
-
-    ## Product or Service Usage Insights:
-    - Identify the most frequently purchased products or services and their revenue contributions.
-    - Highlight any underutilized or low-demand products/services.
-    - Note trends in product/service usage (e.g., increasing or decreasing demand).
-    - Rank the top product/service categories based on sales volume or revenue.
-
-    ## Actionable Insights:
-    - Provide recommendations for optimizing spending, improving product/service utilization, or addressing any identified issues.
-    
-    ## Additional Instructions:
-    - Format the report with clear sections and bullet points for readability.
-    - Use quantitative metrics and percentages wherever possible.
-    - Ensure insights are actionable and backed by data trends.
-    - Use markdown formatting for headers and lists.
-    '''
+    REPORT_PROMPT = REPORT_GENERATION_PROMPT
     
     def __init__(self, session_id: str):
         """

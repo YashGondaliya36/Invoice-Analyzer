@@ -15,6 +15,11 @@ from typing import Dict, Any, List, Optional
 from app.services.gemini_service import get_gemini_service
 from app.utils.file_handler import FileHandler
 from app.utils.logger import logger
+from app.prompts.analytics import (
+    get_code_generation_prompt,
+    get_explanation_prompt,
+    get_insights_prompt
+)
 
 
 class DataAnalystService:
@@ -128,25 +133,11 @@ class DataAnalystService:
 
     async def _generate_code(self, question: str) -> Dict[str, Any]:
         """Generate Python code using Gemini."""
-        prompt = f"""You are an expert data analyst. Generate Python code to answer this question about the dataset.
-
-Dataset Information:
-- Columns: {', '.join(self.df_info['columns'])}
-- Shape: {self.df_info['shape'][0]} rows, {self.df_info['shape'][1]} columns
-- Data types: {json.dumps(self.df_info['dtypes'], indent=2)}
-- Preview: {json.dumps(self.df_info['preview'], indent=2)}
-
-User Question: {question}
-
-CRITICAL RULES:
-1. 'df' is ALREADY LOADED. DO NOT create sample data.
-2. Use 'df' directly.
-3. Use ONLY plotly.express (as px) or plotly.graph_objects (as go) for plotting.
-4. Save charts to '{self.file_handler.get_visualization_file()}' using fig.write_html().
-   Example: fig.write_html('{str(self.file_handler.get_visualization_file()).replace("\\", "\\\\")}')
-5. Assign final answer/data to variable 'result'.
-6. Return purely executable Python code. No markdown.
-"""
+        prompt = get_code_generation_prompt(
+            df_info=self.df_info,
+            question=question,
+            chart_path=str(self.file_handler.get_visualization_file())
+        )
         try:
             # Use our existing GeminiService
             code = await self.gemini.generate_content(prompt, temperature=0.1)  # Low temp for precision
@@ -195,14 +186,11 @@ CRITICAL RULES:
 
     async def _generate_explanation(self, question: str, code: str, result: Dict) -> str:
         """Generate a natural language explanation of the findings."""
-        prompt = f"""Explain these analysis results to a user.
-Question: {question}
-Code:
-{code}
-Result: {result.get('data')}
-
-Keep it concise, insightful, and easy to understand (max 3 sentences).
-"""
+        prompt = get_explanation_prompt(
+            question=question,
+            code=code,
+            result=result.get('data')
+        )
         try:
             return await self.gemini.generate_content(prompt, temperature=0.7)
         except Exception:
@@ -218,11 +206,8 @@ Keep it concise, insightful, and easy to understand (max 3 sentences).
             summary = self._calculate_summary_stats()
             
             # Generate insights via AI
-            prompt = f"""Analyze this dataset summary and provide 5 key insights.
-Summary: {json.dumps(summary, indent=2)}
-
-Format as JSON list of objects with keys: "text" (insight), "category" (info/warning/success), "priority" (high/medium/low).
-"""
+            prompt = get_insights_prompt(summary)
+            
             response_text = await self.gemini.generate_content(prompt, temperature=0.5)
             
             # Clean and parse JSON
