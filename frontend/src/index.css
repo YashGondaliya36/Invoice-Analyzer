@@ -1,0 +1,122 @@
+@import "tailwindcss";
+
+@theme {
+  /* "Industrial Finance" Palette */
+  --color-stone-950: #0c0a09;
+  /* Main BG - Warm Dark */
+  --color-stone-900: #1c1917;
+  /* Surface/Card */
+  --color-stone-800: #292524;
+  /* Borders */
+
+  --color-accent: #ff5722;
+  /* International Orange - Action */
+  --color-accent-hover: #f4511e;
+
+  --color-success: #10b981;
+  /* Emerald - Financial Growth */
+  --color-text-main: #f5f5f4;
+  /* Stone 100 - Primary Text */
+  --color-text-muted: #a8a29e;
+  /* Stone 400 - Secondary Text */
+
+  /* Fonts */
+  --font-sans: 'Inter', sans-serif;
+
+  /* Animations */
+  --animate-fade-in: fadeIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-slide-up: slideUp 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+  --animate-float: float 6s ease-in-out infinite;
+
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+
+    100% {
+      opacity: 1;
+    }
+  }
+
+  @keyframes slideUp {
+    0% {
+      transform: translateY(40px);
+      opacity: 0;
+    }
+
+    100% {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+
+  @keyframes float {
+
+    0%,
+    100% {
+      transform: translateY(0);
+    }
+
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+}
+
+/* Base Styles */
+@layer base {
+  body {
+    background-color: var(--color-stone-950);
+    color: var(--color-text-main);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  /* Refined Scrollbar */
+  ::-webkit-scrollbar {
+    width: 6px;
+    height: 6px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: var(--color-stone-800);
+    border-radius: 99px;
+  }
+
+  ::-webkit-scrollbar-thumb:hover {
+    background: var(--color-accent);
+  }
+}
+
+/* Component Utilities */
+@layer components {
+
+  /* Solid, Professional Panels instead of blurry glass */
+  .industrial-panel {
+    @apply bg-stone-900 border border-stone-800 rounded-2xl shadow-xl transition-all duration-300;
+  }
+
+  .industrial-panel:hover {
+    @apply border-stone-700 shadow-2xl;
+  }
+
+  .btn-accent {
+    @apply bg-accent hover:bg-accent-hover text-white px-8 py-3 rounded-lg font-semibold tracking-wide shadow-lg shadow-orange-900/20 transition-all duration-200 active:scale-95 flex items-center justify-center gap-2;
+  }
+
+  .btn-ghost {
+    @apply bg-stone-800/50 hover:bg-stone-800 text-stone-300 hover:text-white px-8 py-3 rounded-lg font-medium border border-stone-800 hover:border-stone-700 transition-all duration-200 active:scale-95 flex items-center justify-center gap-2;
+  }
+
+  .nav-item {
+    @apply flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-200 font-medium text-stone-400 hover:bg-stone-800 hover:text-white;
+  }
+
+  .nav-item.active {
+    @apply bg-stone-800 text-accent border border-stone-700/50;
+  }
+}

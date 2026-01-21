@@ -40,21 +40,27 @@ class InvoiceItem(BaseModel):
     Single invoice line item extracted from invoice image.
     Matches the structure returned by Gemini AI.
     """
-    invoice_no: str = Field(..., alias="Invoice No", description="Invoice number/reference")
-    product_name: str = Field(..., alias="Product Name", description="Product or service name")
-    qty: int = Field(..., alias="Qty", description="Quantity")
-    amount: float = Field(..., alias="Amount", description="Amount value")
-    date: str = Field(..., alias="Date", description="Invoice date (DD-MM-YY format)")
+    invoice_no: Optional[str] = Field(None, description="Invoice number/reference")
+    date: Optional[str] = Field(None, description="Invoice date (YYYY-MM-DD format)")
+    customer_name: Optional[str] = Field(None, description="Name of the client/customer")
+    product_name: Optional[str] = Field(None, description="Product or service name")
+    category: Optional[str] = Field(None, description="Category of the item")
+    quantity: Optional[float] = Field(None, description="Quantity")
+    unit_price: Optional[float] = Field(None, description="Price per unit")
+    total_price: Optional[float] = Field(None, description="Total line item amount")
     
     class Config:
         populate_by_name = True
         json_schema_extra = {
             "example": {
-                "Invoice No": "INV001",
-                "Product Name": "Steel Pipe 6mm",
-                "Qty": 25,
-                "Amount": 3593.10,
-                "Date": "15-01-25"
+                "invoice_no": "INV001",
+                "date": "2025-01-15",
+                "customer_name": "Acme Corp",
+                "product_name": "Steel Pipe 6mm",
+                "category": "Hardware",
+                "quantity": 25,
+                "unit_price": 100.0,
+                "total_price": 2500.0
             }
         }
 
@@ -123,7 +129,7 @@ class ProcessingResponse(BaseModel):
                 "status": "completed",
                 "total_items": 15,
                 "data": [
-                    {"Invoice No": "INV001", "Product Name": "Steel Pipe", "Qty": 10, "Amount": 5000.00, "Date": "15-01-25"}
+                    {"invoice_no": "INV001", "product_name": "Steel Pipe", "quantity": 10, "total_price": 5000.00, "date": "2025-01-15"}
                 ],
                 "processed_at": "2025-01-20T21:30:00"
             }
@@ -177,7 +183,7 @@ class VisualizationRequest(BaseModel):
     class Config:
         json_schema_extra = {
             "example": {
-                "columns": ["Amount", "Date", "Product Name"]
+                "columns": ["total_price", "date", "product_name"]
             }
         }
 
@@ -204,7 +210,7 @@ class AnalyticsResponse(BaseModel):
     """Response from AI Data Analyst."""
     success: bool = Field(default=True)
     answer: str = Field(..., description="Natural language explanation")
-    code: Optional[str] = Field(None, description="Generated Python code")
+    code_generated: Optional[str] = Field(None, description="Generated Python code")
     data: Optional[str] = Field(None, description="Result data (if any)")
     visualization: Optional[str] = Field(None, description="URL/Path to generated chart HTML")
 
