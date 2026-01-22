@@ -1,7 +1,18 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { AnalyticsService } from '../services/api';
 import type { InsightResponse, ChartData } from '../types';
-import Plot from 'react-plotly.js';
+// Robust Plotly loading using factory pattern to fix Vite/React 19 compatibility
+const Plot = React.lazy(async () => {
+    const [PlotlyModule, createPlotlyComponentModule] = await Promise.all([
+        import('plotly.js'),
+        import('react-plotly.js/factory')
+    ]);
+
+    const Plotly = PlotlyModule.default || PlotlyModule;
+    const createPlotlyComponent = createPlotlyComponentModule.default || createPlotlyComponentModule;
+
+    return { default: createPlotlyComponent(Plotly) as React.ComponentType<any> };
+});
 import { Send, Bot, User, Code, BarChart2, Loader2, Sparkles, AlertCircle, LayoutDashboard, MessageSquare, ExternalLink } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -292,8 +303,8 @@ const Analytics: React.FC = () => {
                                                         key={column}
                                                         onClick={() => handleColumnToggle(column)}
                                                         className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-all border ${selectedColumns.includes(column)
-                                                                ? 'bg-accent/20 border-accent text-accent'
-                                                                : 'bg-stone-900 border-stone-700 text-stone-500 hover:border-stone-600'
+                                                            ? 'bg-accent/20 border-accent text-accent'
+                                                            : 'bg-stone-900 border-stone-700 text-stone-500 hover:border-stone-600'
                                                             }`}
                                                     >
                                                         {column}
@@ -315,20 +326,22 @@ const Analytics: React.FC = () => {
                                                         {chart.chart_name}
                                                     </h3>
                                                     <div className="flex-1 min-h-[300px]">
-                                                        <Plot
-                                                            data={chart.data}
-                                                            layout={{
-                                                                ...chart.layout,
-                                                                paper_bgcolor: 'rgba(0,0,0,0)',
-                                                                plot_bgcolor: 'rgba(0,0,0,0)',
-                                                                font: { color: '#a8a29e' },
-                                                                margin: { t: 10, r: 10, l: 40, b: 40 },
-                                                                autosize: true,
-                                                            }}
-                                                            useResizeHandler={true}
-                                                            style={{ width: '100%', height: '100%' }}
-                                                            config={{ responsive: true, displayModeBar: false }}
-                                                        />
+                                                        <React.Suspense fallback={<div className="flex h-full items-center justify-center"><Loader2 className="animate-spin text-stone-500" /></div>}>
+                                                            <Plot
+                                                                data={chart.data}
+                                                                layout={{
+                                                                    ...chart.layout,
+                                                                    paper_bgcolor: 'rgba(0,0,0,0)',
+                                                                    plot_bgcolor: 'rgba(0,0,0,0)',
+                                                                    font: { color: '#a8a29e' },
+                                                                    margin: { t: 10, r: 10, l: 40, b: 40 },
+                                                                    autosize: true,
+                                                                }}
+                                                                useResizeHandler={true}
+                                                                style={{ width: '100%', height: '100%' }}
+                                                                config={{ responsive: true, displayModeBar: false }}
+                                                            />
+                                                        </React.Suspense>
                                                     </div>
                                                 </div>
                                             ))}
@@ -373,20 +386,22 @@ const Analytics: React.FC = () => {
 
                                             {msg.chart && (
                                                 <div className="border border-stone-800 rounded-xl overflow-hidden bg-stone-950 p-2 shadow-lg">
-                                                    <Plot
-                                                        data={msg.chart.data}
-                                                        layout={{
-                                                            ...msg.chart.layout,
-                                                            paper_bgcolor: 'rgba(0,0,0,0)',
-                                                            plot_bgcolor: 'rgba(0,0,0,0)',
-                                                            font: { color: '#a8a29e' },
-                                                            margin: { t: 30, r: 20, l: 40, b: 40 },
-                                                            autosize: true,
-                                                            height: 400
-                                                        }}
-                                                        config={{ responsive: true, displayModeBar: false }}
-                                                        style={{ width: '100%', height: '400px' }}
-                                                    />
+                                                    <React.Suspense fallback={<div className="p-10 flex justify-center"><Loader2 className="animate-spin" /></div>}>
+                                                        <Plot
+                                                            data={msg.chart.data}
+                                                            layout={{
+                                                                ...msg.chart.layout,
+                                                                paper_bgcolor: 'rgba(0,0,0,0)',
+                                                                plot_bgcolor: 'rgba(0,0,0,0)',
+                                                                font: { color: '#a8a29e' },
+                                                                margin: { t: 30, r: 20, l: 40, b: 40 },
+                                                                autosize: true,
+                                                                height: 400
+                                                            }}
+                                                            config={{ responsive: true, displayModeBar: false }}
+                                                            style={{ width: '100%', height: '400px' }}
+                                                        />
+                                                    </React.Suspense>
                                                 </div>
                                             )}
 

@@ -169,7 +169,7 @@ class ChartData(BaseModel):
     """Single chart data structure."""
     chart_type: str = Field(..., description="Type of chart (bar, line, pie, etc.)")
     chart_name: str = Field(..., description="Display name for the chart")
-    data: dict[str, Any] = Field(..., description="Plotly-compatible chart data")
+    data: dict[str, Any] | list[dict[str, Any]] = Field(..., description="Plotly-compatible chart data (single trace dict or list of traces)")
     layout: Optional[dict[str, Any]] = Field(
         default=None, 
         description="Plotly layout configuration"

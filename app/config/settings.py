@@ -21,8 +21,8 @@ class Settings(BaseSettings):
     debug: bool = Field(default=False, description="Enable debug mode")
     
     # Google Gemini API
-    google_api_key: str = Field(..., description="Google Gemini API Key")
-    gemini_model: str = Field(default="gemini-2.5-flash", description="Gemini model name")
+    google_api_key: str = Field("AIzaSyDsXWll2hi0cz2-MYx_KVSLK6UMG26UmZc", description="Google Gemini API Key")
+    gemini_model: str = Field(default="gemini-2.0-flash", description="Gemini model name")
     
     # Server Configuration
     host: str = Field(default="0.0.0.0", description="Server host")

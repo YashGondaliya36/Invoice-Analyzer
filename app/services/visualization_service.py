@@ -31,12 +31,25 @@ class VisualizationService:
     
     @property
     def df(self) -> pd.DataFrame:
-        """Load and cache the invoice dataframe."""
+        """Load and cache the dataframe from invoice data or uploaded CSV."""
         if self._df is None:
+            # Priority 1: Check for uploaded CSV files (direct CSV upload mode)
+            upload_dir = self.file_handler.get_upload_dir()
+            if upload_dir.exists():
+                for file in upload_dir.glob("*.csv"):
+                    try:
+                        self._df = pd.read_csv(file)
+                        logger.info(f"Loaded CSV from uploads: {file.name}")
+                        return self._df
+                    except Exception as e:
+                        logger.warning(f"Failed to load CSV {file.name}: {e}")
+            
+            # Priority 2: Load processed invoice data (invoice image mode)
             data = self.file_handler.load_invoice_data()
             if not data:
-                raise FileNotFoundError("No processed invoice data found")
+                raise FileNotFoundError("No data found. Please upload invoices or CSV first.")
             self._df = pd.DataFrame(data)
+            logger.info("Loaded processed invoice data")
         return self._df
     
     def get_available_columns(self) -> list[str]:

@@ -96,7 +96,7 @@ def process_and_generate_brief_report():
         return "API key not found. Please set the GOOGLE_API_KEY in your environment."
     
     genai.configure(api_key=api_key)
-    model = genai.GenerativeModel(model_name="gemini-2.0-flash-exp")
+    model = genai.GenerativeModel(model_name="gemini-2.5-flash-lite")
     
     images = load_images_from_local_database()
     if not images:
