@@ -1,5 +1,5 @@
 import axios from 'axios';
-import type { Session, AnalyticsResponse, InsightResponse, ProcessingResponse, InvoiceDataResponse } from '../types';
+import type { Session, AnalyticsResponse, InsightResponse, ProcessingResponse, InvoiceDataResponse, VisualizationResponse } from '../types';
 
 const API_URL = 'http://localhost:8000/api/v1';
 
@@ -57,6 +57,17 @@ export const AnalyticsService = {
 
     getInsights: async (sessionId: string) => {
         return api.get<{ insights: InsightResponse[], summary: any }>(`/analytics/insights/${sessionId}`);
+    },
+
+    getColumns: async (sessionId: string) => {
+        return api.get<{ columns: string[] }>(`/visualizations/columns/${sessionId}`);
+    },
+
+    getVisualizations: async (sessionId: string, columns?: string[]) => {
+        const params = columns && columns.length > 0
+            ? { params: { columns } }
+            : {};
+        return api.get<VisualizationResponse>(`/visualizations/${sessionId}`, params);
     },
 
     getChartUrl: (sessionId: string) => `${API_URL}/analytics/chart/${sessionId}`

@@ -38,8 +38,17 @@ export interface Session {
 export interface ChartData {
     chart_type: string;
     chart_name: string;
-    data: any[];
-    layout: any;
+    data: any | any[]; // Can be single trace object or array of traces
+    layout?: any;
+}
+
+export interface VisualizationResponse {
+    success: boolean;
+    session_id: string;
+    available_columns: string[];
+    selected_columns: string[];
+    charts: ChartData[];
+    total_charts: number;
 }
 
 export interface AnalyticsResponse {
