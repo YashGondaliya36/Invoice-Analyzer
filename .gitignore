@@ -39,7 +39,7 @@ IA/
 pip-log.txt
 pip-delete-this-directory.txt
 
-#project_06_ai_data_analyst/
+project_06_ai_data_analyst/
 
 logs/
 # Unit test / coverage reports
