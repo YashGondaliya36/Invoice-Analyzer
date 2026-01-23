@@ -59,16 +59,23 @@ export const AnalyticsService = {
         return api.get<{ insights: InsightResponse[], summary: any }>(`/analytics/insights/${sessionId}`);
     },
 
-    getColumns: async (sessionId: string) => {
-        return api.get<{ columns: string[] }>(`/visualizations/columns/${sessionId}`);
-    },
-
-    getVisualizations: async (sessionId: string, columns?: string[]) => {
-        const params = columns && columns.length > 0
-            ? { params: { columns } }
-            : {};
-        return api.get<VisualizationResponse>(`/visualizations/${sessionId}`, params);
+    getVisualizations: async (sessionId: string) => {
+        return api.get<VisualizationResponse>(`/visualizations/${sessionId}`);
     },
 
     getChartUrl: (sessionId: string) => `${API_URL}/analytics/chart/${sessionId}`
+};
+
+// Visualization Service for Column Selection Flow (No LLM)
+export const VisualizationService = {
+    getAvailableColumns: async (sessionId: string) => {
+        return api.get<{ success: boolean, session_id: string, columns: string[] }>(`/visualizations/columns/${sessionId}`);
+    },
+
+    getVisualizationsForColumns: async (sessionId: string, columns: string[]) => {
+        // Build query string for columns
+        const params = new URLSearchParams();
+        columns.forEach(col => params.append('columns', col));
+        return api.get<VisualizationResponse>(`/visualizations/${sessionId}?${params.toString()}`);
+    }
 };

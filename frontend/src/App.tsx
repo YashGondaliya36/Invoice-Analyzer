@@ -5,6 +5,7 @@ import UploadInvoices from './pages/UploadInvoices';
 import Invoices from './pages/Invoices';
 import Analytics from './pages/Analytics';
 import Reports from './pages/Reports';
+import Visualizations from './pages/Visualizations';
 
 function App() {
   return (
@@ -14,6 +15,7 @@ function App() {
           <Route path="/" element={<Home />} />
           <Route path="/upload" element={<UploadInvoices />} />
           <Route path="/invoices" element={<Invoices />} />
+          <Route path="/visualizations" element={<Visualizations />} />
           <Route path="/analytics" element={<Analytics />} />
           <Route path="/reports" element={<Reports />} />
           {/* Catch all redirect */}
@@ -25,3 +27,4 @@ function App() {
 }
 
 export default App;
+

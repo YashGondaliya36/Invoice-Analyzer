@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DataWiz AI - AI-Powered Data Analyst</title>
+    <meta name="description"
+        content="Upload your data and ask questions. Get instant insights, visualizations, and analysis powered by AI.">
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Styles -->
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body>
+    <!-- Animated Background -->
+    <div class="background">
+        <div class="orb orb1"></div>
+        <div class="orb orb2"></div>
+        <div class="orb orb3"></div>
+    </div>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <h1>🧙‍♂️ DataWiz AI</h1>
+            <p>AI-Powered Data Analyst - Upload, Ask, Discover</p>
+        </header>
+
+        <!-- Upload Section -->
+        <div class="card">
+            <div class="upload-section">
+                <div class="upload-area" id="uploadArea">
+                    <div class="upload-icon">📊</div>
+                    <div class="upload-text">
+                        <h3>Drop your data here</h3>
+                        <p>or click to browse (CSV, Excel)</p>
+                    </div>
+                </div>
+
+                <input type="file" id="fileInput" accept=".csv,.xlsx,.xls">
+
+                <button class="btn btn-primary" id="uploadBtn">
+                    <span>📁</span>
+                    Choose File
+                </button>
+
+                <!-- File Info (Hidden initially) -->
+                <div class="file-info" id="fileInfo">
+                    <h4>✅ File Loaded: <span id="fileName"></span></h4>
+                    <div class="file-stats" id="fileStats"></div>
+                </div>
+
+                <!-- Get Insights Button -->
+                <button class="btn btn-success" id="insightsBtn" style="display: none;">
+                    <span>🔍</span>
+                    Get AI Insights
+                </button>
+            </div>
+        </div>
+
+        <!-- Insights Section (Hidden initially) -->
+        <div class="card insights-section" id="insightsSection">
+            <h2 class="section-title">
+                <span>💡</span>
+                Automated Insights
+            </h2>
+
+            <div class="loading" id="insightsLoading">
+                <div class="spinner"></div>
+                <p>🤖 AI is analyzing your data...</p>
+            </div>
+
+            <div id="insightsContainer">
+                <!-- Insights will be inserted here -->
+            </div>
+        </div>
+
+        <!-- Chat Section (Hidden initially) -->
+        <div class="card chat-section" id="chatSection">
+            <h2 class="section-title">
+                <span>💬</span>
+                Ask Questions About Your Data
+            </h2>
+
+            <!-- Chat Input -->
+            <div class="chat-input-area">
+                <input type="text" id="questionInput"
+                    placeholder="e.g., What are the top 5 products by sales? Show me a trend chart..."
+                    autocomplete="off">
+                <button class="btn btn-primary" id="askBtn">
+                    <span>🚀</span>
+                    Analyze
+                </button>
+                <button class="btn btn-secondary" id="resetBtn">
+                    <span>🔄</span>
+                    Reset
+                </button>
+            </div>
+
+            <!-- Loading Indicator -->
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <p>🤖 AI is analyzing your data...</p>
+            </div>
+
+            <!-- Messages -->
+            <div class="messages" id="messages">
+                <!-- Messages will be added here dynamically -->
+            </div>
+        </div>
+
+        <!-- Instructions -->
+        <div class="card instructions-card">
+            <h3 style="margin-bottom: 1.5rem;">📚 How to Use DataWiz AI</h3>
+            <ol style="line-height: 2.2; color: var(--text-secondary);">
+                <li><strong>Upload Data:</strong> Drop your CSV or Excel file above</li>
+                <li><strong>Get Insights:</strong> Click "Get AI Insights" for automated analysis</li>
+                <li><strong>Ask Questions:</strong> Type natural language questions about your data</li>
+                <li><strong>Explore:</strong> Ask follow-up questions to dig deeper</li>
+            </ol>
+
+            <h4 style="margin-top: 2rem; margin-bottom: 1rem;">💡 Example Questions:</h4>
+            <ul style="line-height: 2.2; color: var(--text-secondary);">
+                <li>"What are the top 10 items by revenue?"</li>
+                <li>"Show me a trend of sales over time"</li>
+                <li>"Calculate average price by category"</li>
+                <li>"Find correlations between columns"</li>
+                <li>"Create a bar chart of top customers"</li>
+            </ul>
+        </div>
+
+        <!-- Footer -->
+        <footer style="text-align: center; margin-top: 4rem; padding: 3rem; color: var(--text-secondary);">
+            <p style="font-size: 1.1rem; margin-bottom: 1rem;">Made with ❤️ using Google Gemini, LangGraph & Plotly</p>
+            <p style="margin-top: 0.5rem; font-size: 0.95rem;">
+                ⚡ Powered by AI • 🔒 Your data stays private • 🚀 Lightning fast analysis
+            </p>
+        </footer>
+    </div>
+
+    <!-- JavaScript -->
+    <script src="/static/js/app.js"></script>
+</body>
+
+</html>

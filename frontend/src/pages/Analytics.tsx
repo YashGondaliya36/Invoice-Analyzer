@@ -1,18 +1,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { AnalyticsService } from '../services/api';
 import type { InsightResponse, ChartData } from '../types';
-// Robust Plotly loading using factory pattern to fix Vite/React 19 compatibility
-const Plot = React.lazy(async () => {
-    const [PlotlyModule, createPlotlyComponentModule] = await Promise.all([
-        import('plotly.js'),
-        import('react-plotly.js/factory')
-    ]);
-
-    const Plotly = PlotlyModule.default || PlotlyModule;
-    const createPlotlyComponent = createPlotlyComponentModule.default || createPlotlyComponentModule;
-
-    return { default: createPlotlyComponent(Plotly) as React.ComponentType<any> };
-});
+import PlotlyChart from '../components/charts/PlotlyChart';
 import { Send, Bot, User, Code, BarChart2, Loader2, Sparkles, AlertCircle, LayoutDashboard, MessageSquare, ExternalLink } from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 
@@ -34,11 +23,6 @@ const Analytics: React.FC = () => {
     const [insights, setInsights] = useState<InsightResponse[]>([]);
     const [dashboardCharts, setDashboardCharts] = useState<ChartData[]>([]);
     const [loadingDashboard, setLoadingDashboard] = useState(false);
-
-    // Column Selection State
-    const [availableColumns, setAvailableColumns] = useState<string[]>([]);
-    const [selectedColumns, setSelectedColumns] = useState<string[]>([]);
-    const [loadingCharts, setLoadingCharts] = useState(false);
 
     // Chat State
     const [messages, setMessages] = useState<Message[]>([]);
@@ -70,32 +54,8 @@ const Analytics: React.FC = () => {
             const insightsRes = await AnalyticsService.getInsights(sid);
             setInsights(insightsRes.data.insights || []);
 
-            // Fetch Available Columns
-            try {
-                const colsRes = await AnalyticsService.getColumns(sid);
-                if (colsRes.data.columns) {
-                    setAvailableColumns(colsRes.data.columns);
-                    // Select all columns initially
-                    setSelectedColumns(colsRes.data.columns);
-                }
-            } catch (e) {
-                console.error("Failed to fetch columns", e);
-            }
-
-            // Fetch Dashboard Charts (with all columns initially)
-            await fetchCharts(sid);
-
-        } catch (error) {
-            console.error("Failed to load dashboard data", error);
-        } finally {
-            setLoadingDashboard(false);
-        }
-    };
-
-    const fetchCharts = async (sid: string, columns?: string[]) => {
-        setLoadingCharts(true);
-        try {
-            const chartsRes = await AnalyticsService.getVisualizations(sid, columns);
+            // Fetch Dashboard Charts
+            const chartsRes = await AnalyticsService.getVisualizations(sid);
             if (chartsRes.data.charts) {
                 // Normalize chart data: Plotly expects data to always be an array
                 const normalizedCharts = chartsRes.data.charts.map(chart => ({
@@ -105,23 +65,9 @@ const Analytics: React.FC = () => {
                 setDashboardCharts(normalizedCharts);
             }
         } catch (error) {
-            console.error("Failed to fetch charts", error);
+            console.error("Failed to load dashboard data", error);
         } finally {
-            setLoadingCharts(false);
-        }
-    };
-
-    const handleColumnToggle = (column: string) => {
-        setSelectedColumns(prev =>
-            prev.includes(column)
-                ? prev.filter(c => c !== column)
-                : [...prev, column]
-        );
-    };
-
-    const handleGenerateCharts = () => {
-        if (sessionId && selectedColumns.length > 0) {
-            fetchCharts(sessionId, selectedColumns);
+            setLoadingDashboard(false);
         }
     };
 
@@ -277,46 +223,6 @@ const Analytics: React.FC = () => {
                                         </div>
                                     )}
 
-                                    {/* Column Selector Section */}
-                                    {availableColumns.length > 0 && (
-                                        <div className="p-4 rounded-xl bg-stone-900/30 border border-stone-800">
-                                            <div className="flex items-center justify-between mb-4">
-                                                <h3 className="text-sm font-bold text-stone-400 uppercase tracking-wider flex items-center gap-2">
-                                                    <BarChart2 size={14} /> Select Columns for Visualization
-                                                </h3>
-                                                <button
-                                                    onClick={handleGenerateCharts}
-                                                    disabled={selectedColumns.length === 0 || loadingCharts}
-                                                    className="px-4 py-2 rounded-lg text-sm font-medium transition-all bg-accent hover:bg-accent/80 text-white disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-                                                >
-                                                    {loadingCharts ? (
-                                                        <Loader2 size={14} className="animate-spin" />
-                                                    ) : (
-                                                        <BarChart2 size={14} />
-                                                    )}
-                                                    Generate Charts
-                                                </button>
-                                            </div>
-                                            <div className="flex flex-wrap gap-2">
-                                                {availableColumns.map((column) => (
-                                                    <button
-                                                        key={column}
-                                                        onClick={() => handleColumnToggle(column)}
-                                                        className={`px-3 py-1.5 rounded-lg text-xs font-mono transition-all border ${selectedColumns.includes(column)
-                                                            ? 'bg-accent/20 border-accent text-accent'
-                                                            : 'bg-stone-900 border-stone-700 text-stone-500 hover:border-stone-600'
-                                                            }`}
-                                                    >
-                                                        {column}
-                                                    </button>
-                                                ))}
-                                            </div>
-                                            <p className="text-xs text-stone-600 mt-3">
-                                                {selectedColumns.length} of {availableColumns.length} columns selected
-                                            </p>
-                                        </div>
-                                    )}
-
                                     {/* Charts Grid */}
                                     {dashboardCharts.length > 0 ? (
                                         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -326,22 +232,19 @@ const Analytics: React.FC = () => {
                                                         {chart.chart_name}
                                                     </h3>
                                                     <div className="flex-1 min-h-[300px]">
-                                                        <React.Suspense fallback={<div className="flex h-full items-center justify-center"><Loader2 className="animate-spin text-stone-500" /></div>}>
-                                                            <Plot
-                                                                data={chart.data}
-                                                                layout={{
-                                                                    ...chart.layout,
-                                                                    paper_bgcolor: 'rgba(0,0,0,0)',
-                                                                    plot_bgcolor: 'rgba(0,0,0,0)',
-                                                                    font: { color: '#a8a29e' },
-                                                                    margin: { t: 10, r: 10, l: 40, b: 40 },
-                                                                    autosize: true,
-                                                                }}
-                                                                useResizeHandler={true}
-                                                                style={{ width: '100%', height: '100%' }}
-                                                                config={{ responsive: true, displayModeBar: false }}
-                                                            />
-                                                        </React.Suspense>
+                                                        <PlotlyChart
+                                                            data={chart.data}
+                                                            layout={{
+                                                                ...chart.layout,
+                                                                paper_bgcolor: 'rgba(0,0,0,0)',
+                                                                plot_bgcolor: 'rgba(0,0,0,0)',
+                                                                font: { color: '#a8a29e' },
+                                                                margin: { t: 10, r: 10, l: 40, b: 40 },
+                                                                autosize: true,
+                                                            }}
+                                                            config={{ responsive: true, displayModeBar: false }}
+                                                            style={{ width: '100%', height: '100%' }}
+                                                        />
                                                     </div>
                                                 </div>
                                             ))}
@@ -386,22 +289,20 @@ const Analytics: React.FC = () => {
 
                                             {msg.chart && (
                                                 <div className="border border-stone-800 rounded-xl overflow-hidden bg-stone-950 p-2 shadow-lg">
-                                                    <React.Suspense fallback={<div className="p-10 flex justify-center"><Loader2 className="animate-spin" /></div>}>
-                                                        <Plot
-                                                            data={msg.chart.data}
-                                                            layout={{
-                                                                ...msg.chart.layout,
-                                                                paper_bgcolor: 'rgba(0,0,0,0)',
-                                                                plot_bgcolor: 'rgba(0,0,0,0)',
-                                                                font: { color: '#a8a29e' },
-                                                                margin: { t: 30, r: 20, l: 40, b: 40 },
-                                                                autosize: true,
-                                                                height: 400
-                                                            }}
-                                                            config={{ responsive: true, displayModeBar: false }}
-                                                            style={{ width: '100%', height: '400px' }}
-                                                        />
-                                                    </React.Suspense>
+                                                    <PlotlyChart
+                                                        data={msg.chart.data}
+                                                        layout={{
+                                                            ...msg.chart.layout,
+                                                            paper_bgcolor: 'rgba(0,0,0,0)',
+                                                            plot_bgcolor: 'rgba(0,0,0,0)',
+                                                            font: { color: '#a8a29e' },
+                                                            margin: { t: 30, r: 20, l: 40, b: 40 },
+                                                            autosize: true,
+                                                            height: 400
+                                                        }}
+                                                        config={{ responsive: true, displayModeBar: false }}
+                                                        style={{ width: '100%', height: '400px' }}
+                                                    />
                                                 </div>
                                             )}
 

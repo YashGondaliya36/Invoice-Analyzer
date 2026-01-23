@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { InvoiceService } from '../services/api';
 import type { InvoiceItem } from '../types';
 import { motion } from 'framer-motion';
-import { RefreshCcw, Search, Filter } from 'lucide-react';
+import { RefreshCcw, Search, Filter, BarChart3 } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 const Invoices: React.FC = () => {
@@ -70,6 +70,9 @@ const Invoices: React.FC = () => {
                     <button className="btn-ghost text-sm px-4 h-10">
                         <Search size={16} /> Search
                     </button>
+                    <Link to="/visualizations" className="btn-accent text-sm px-4 h-10">
+                        <BarChart3 size={16} /> Generate Charts
+                    </Link>
                 </div>
             </div>
 

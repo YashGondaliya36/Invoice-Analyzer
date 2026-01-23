@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { LayoutDashboard, FileText, PieChart, Upload, BrainCircuit, ScanLine } from 'lucide-react';
+import { LayoutDashboard, FileText, PieChart, Upload, BrainCircuit, ScanLine, BarChart3 } from 'lucide-react';
 import clsx from 'clsx';
 import NeuralBackground from './NeuralBackground';
 
@@ -13,6 +13,7 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
         { icon: LayoutDashboard, label: 'Sessions', path: '/' },
         { icon: Upload, label: 'Upload', path: '/upload' },
         { icon: FileText, label: 'Invoices', path: '/invoices' },
+        { icon: BarChart3, label: 'Charts', path: '/visualizations' },
         { icon: BrainCircuit, label: 'AI Analyst', path: '/analytics' },
         { icon: PieChart, label: 'Reports', path: '/reports' },
     ];
