@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { AnalyticsService } from '../services/api';
 import { FileText, Download, RefreshCw, AlertCircle } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 
 const Reports: React.FC = () => {
     const [sessionId, setSessionId] = useState<string | null>(null);
@@ -81,18 +83,25 @@ const Reports: React.FC = () => {
             ) : report ? (
                 <div className="industrial-panel p-8 md:p-12 min-h-[60vh] relative overflow-hidden">
                     {/* Report Content */}
-                    <div className="prose prose-invert prose-stone max-w-none">
-                        {/* We need a Markdown Library. I added react-markdown but it might not be installed. 
-                             Wait, I didn't install 'react-markdown' in package.json.
-                             I should probably just render whitespace-pre-wrap for now or install it.
-                             Checking package.json...
-                         */}
-                        <div className="whitespace-pre-wrap font-sans text-stone-300 leading-relaxed text-lg">
+                    <div className="prose prose-invert prose-stone prose-lg max-w-none prose-headings:text-white prose-a:text-accent prose-strong:text-white prose-li:text-stone-300 pointer-events-none">
+                        <ReactMarkdown
+                            remarkPlugins={[remarkGfm]}
+                            components={{
+                                h1: ({ node, ...props }) => <h1 className="text-3xl font-bold text-white mb-6 mt-8 pb-2 border-b border-stone-800" {...props} />,
+                                h2: ({ node, ...props }) => <h2 className="text-2xl font-bold text-accent mb-4 mt-8" {...props} />,
+                                h3: ({ node, ...props }) => <h3 className="text-xl font-semibold text-white mb-3 mt-6" {...props} />,
+                                p: ({ node, ...props }) => <p className="text-stone-300 leading-relaxed mb-4 text-lg" {...props} />,
+                                ul: ({ node, ...props }) => <ul className="list-disc list-outside ml-6 space-y-2 mb-6 text-stone-300" {...props} />,
+                                li: ({ node, ...props }) => <li className="pl-2" {...props} />,
+                                strong: ({ node, ...props }) => <strong className="text-white font-bold" {...props} />,
+                                blockquote: ({ node, ...props }) => <blockquote className="border-l-4 border-accent pl-4 italic text-stone-400 my-4 bg-stone-900/50 p-4 rounded-r-lg" {...props} />,
+                            }}
+                        >
                             {report}
-                        </div>
+                        </ReactMarkdown>
                     </div>
 
-                    <div className="absolute top-4 right-4">
+                    <div className="absolute top-4 right-4 pointer-events-auto">
                         <button className="p-2 hover:bg-stone-800 rounded-lg text-stone-500 hover:text-white transition-colors" title="Download Markdown">
                             <Download size={20} />
                         </button>

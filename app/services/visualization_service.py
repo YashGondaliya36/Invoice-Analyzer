@@ -190,8 +190,9 @@ class VisualizationService:
                 "layout": {
                     "title": "Sales by Product",
                     "xaxis": {"title": "Total Sales Amount"},
-                    "yaxis": {"title": product_col},
+                    "yaxis": {"title": product_col, "automargin": True},
                     "template": "plotly_white",
+                    "margin": {"l": 150, "r": 20, "t": 40, "b": 50},
                     "height": max(400, len(product_sales) * 30)
                 }
             }
@@ -266,8 +267,9 @@ class VisualizationService:
                 "layout": {
                     "title": "Quantity Sold by Product",
                     "xaxis": {"title": "Total Quantity"},
-                    "yaxis": {"title": product_col},
+                    "yaxis": {"title": product_col, "automargin": True},
                     "template": "plotly_white",
+                    "margin": {"l": 150, "r": 20, "t": 40, "b": 50},
                     "height": max(400, len(qty_by_product) * 30)
                 }
             }
