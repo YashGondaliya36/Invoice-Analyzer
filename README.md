@@ -17,17 +17,17 @@
 The command center for your financial operations. Upload invoices and get immediate status updates.
 ![Dashboard Home](assets/Home.png)
 
-### 📊 **Interactive Analytics**
-Chat with your data! Ask questions like *"Show me monthly sales trends"* and get instant, interactive Plotly charts.
-![Analytics](assets/1.png)
+### 📈 **Interactive Charts**
+Visualizations aren't just static images. View comprehensive breakdowns of your data with interactive charts.
+![Interactive Charts](assets/2.png)
 
-### 📝 **Deep Reporting**
-Generate executive-level markdown reports summarizing spending habits, top vendors, and strategic insights.
-![Reports](assets/3.png)
+### 🤖 **AI Analyst**
+Chat with your data! Ask questions like *"Show me monthly sales trends"* or *"Who is my top vendor?"* and get instant answers.
+![AI Analyst](assets/3.png)
 
-### 📁 **Session Management**
-Organize your analysis into sessions. View past uploads and resume analysis anytime.
-![Sessions](assets/2.png)
+### 📝 **Executive Reports**
+Generate detailed markdown reports summarizing spending habits, comparisons, and strategic insights ready for export.
+![Reports](assets/4.png)
 
 ---
 
