@@ -64,7 +64,7 @@ CRITICAL RULES:
 3. Use ONLY plotly.express (as px) or plotly.graph_objects (as go) for plotting.
 4. Save charts to '{chart_path}' using fig.write_html().
    Example: fig.write_html('{chart_path.replace("\\", "\\\\")}')
-5. Assign final answer/data to variable 'result'.
+5. Assign final answer/data to variable 'result'. If you generate a chart, assign the FIGURE OBJECT (fig) to 'result'.
 6. Return purely executable Python code. No markdown.
 """
 

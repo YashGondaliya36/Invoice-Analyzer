@@ -24,6 +24,7 @@ venv/
 # 1. Directories
 !/app/
 !/frontend/
+!/assets/
 
 # 2. Files
 !/README.md
