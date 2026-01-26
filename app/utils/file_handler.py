@@ -198,6 +198,29 @@ class FileHandler:
         file_path = self.get_metadata_file()
         with open(file_path, 'w') as f:
             json.dump(metadata, f, indent=2)
+
+    def get_chat_history_file(self) -> Path:
+        """Get the path to the chat history file."""
+        return self.session_dir / "chat_history.json"
+
+    def save_chat_history(self, history: list[dict]):
+        """Save chat history to file."""
+        file_path = self.get_chat_history_file()
+        with open(file_path, 'w', encoding='utf-8') as f:
+            json.dump(history, f, indent=2, default=str)
+
+    def load_chat_history(self) -> list[dict]:
+        """Load chat history from file."""
+        file_path = self.get_chat_history_file()
+        if not file_path.exists():
+            return []
+        
+        try:
+            with open(file_path, 'r', encoding='utf-8') as f:
+                return json.load(f)
+        except Exception as e:
+            logger.error(f"Error loading chat history for session {self.session_id}: {e}")
+            return []
     
     def load_metadata(self) -> dict:
         """Load session metadata."""

@@ -6,6 +6,7 @@ Uses Gemini to generate Python code for analysis and executes it safely.
 
 import json
 import traceback
+from datetime import datetime
 import pandas as pd
 import plotly.express as px
 import plotly.graph_objects as go
@@ -118,6 +119,28 @@ class DataAnalystService:
             explanation = await self._generate_explanation(
                 user_question, generated_code, execution_result
             )
+            
+            # Persist Chat History
+            history = self.file_handler.load_chat_history()
+            
+            # User Message
+            history.append({
+                "role": "user",
+                "text": user_question,
+                "timestamp": datetime.now().isoformat()
+            })
+            
+            # Assistant Message (with results)
+            history.append({
+                "role": "assistant",
+                "text": explanation,
+                "code": generated_code,
+                "visualization": execution_result.get("visualization"),
+                "data": execution_result.get("data"),
+                "timestamp": datetime.now().isoformat()
+            })
+            
+            self.file_handler.save_chat_history(history)
             
             return {
                 "success": True,

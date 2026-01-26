@@ -63,7 +63,21 @@ export const AnalyticsService = {
         return api.get<VisualizationResponse>(`/visualizations/${sessionId}`);
     },
 
-    getChartUrl: (sessionId: string) => `${API_URL}/analytics/chart/${sessionId}`
+    getChartUrl: (sessionId: string) => `${API_URL}/analytics/chart/${sessionId}`,
+
+    getChatHistory: async (sessionId: string) => {
+        return api.get<any[]>(`/analytics/history/${sessionId}`);
+    }
+};
+
+export const SessionService = {
+    getAllSessions: async () => {
+        return api.get<{ sessions: Session[] }>('/sessions/');
+    },
+
+    deleteSession: async (sessionId: string) => {
+        return api.delete<{ message: string }>(`/sessions/${sessionId}`);
+    }
 };
 
 // Visualization Service for Column Selection Flow (No LLM)

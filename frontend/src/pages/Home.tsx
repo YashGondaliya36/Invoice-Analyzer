@@ -57,7 +57,7 @@ const Home: React.FC = () => {
 
             {/* Right Graphic */}
             <div className="relative animate-fade-in lg:block hidden">
-                <div className="absolute -inset-4 bg-stone-900/50 rounded-full blur-3xl opacity-20" />
+
                 <HeroGraphic />
 
                 {/* Floating "Live Status" Card */}

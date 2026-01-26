@@ -5,6 +5,7 @@ Handles CSV upload, AI queries, and automated insights.
 
 from fastapi import APIRouter, UploadFile, File, HTTPException, status
 from fastapi.responses import FileResponse
+from typing import List
 
 from app.services.data_analyst import DataAnalystService
 from app.utils.file_handler import FileHandler
@@ -133,3 +134,20 @@ async def get_chart(session_id: str):
         raise HTTPException(status_code=404, detail="No chart found for this session.")
         
     return FileResponse(chart_path)
+
+
+@router.get(
+    "/history/{session_id}",
+    response_model=List[dict],
+    summary="Get Chat History",
+    description="Retrieve the full chat history for a specific session."
+)
+async def get_chat_history(session_id: str):
+    """
+    Get the chat history for a session.
+    """
+    if not FileHandler.session_exists(session_id):
+        raise HTTPException(status_code=404, detail="Session not found")
+        
+    file_handler = FileHandler(session_id)
+    return file_handler.load_chat_history()

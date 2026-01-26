@@ -31,4 +31,5 @@ venv/
 !/requirements.txt
 !/.gitignore
 !/LICENSE
+!/storage
 
